@@ -35,6 +35,7 @@
 
 #define  INCLUDE_FROM_CATERINA_C
 #include "Caterina.h"
+#include "util/delay.h"
 
 /** Contains the current baud rate and other settings of the first virtual serial port. This must be retained as some
  *  operating systems will not open the port unless the settings can be set successfully.
@@ -62,7 +63,7 @@ uint16_t TxLEDPulse = 0; // time remaining for Tx LED pulse
 uint16_t RxLEDPulse = 0; // time remaining for Rx LED pulse
 
 /* Bootloader timeout timer */
-#define TIMEOUT_PERIOD	8000
+#define TIMEOUT_PERIOD  10000
 uint16_t Timeout = 0;
 
 uint16_t bootKey = 0x7777;
@@ -121,15 +122,18 @@ int main(void)
 	/* Watchdog may be configured with a 15 ms period so must disable it before going any further */
 	wdt_disable();
 	
-	if (mcusr_state & (1<<EXTRF)) {
-		// External reset -  we should continue to self-programming mode.
-	} else if ((mcusr_state & (1<<PORF)) && (pgm_read_word(0) != 0xFFFF)) {		
-		// After a power-on reset skip the bootloader and jump straight to sketch 
-		// if one exists.	
-		StartSketch();
-	} else if ((mcusr_state & (1<<WDRF)) && (bootKeyPtrVal != bootKey) && (pgm_read_word(0) != 0xFFFF)) {	
-		// If it looks like an "accidental" watchdog reset then start the sketch.
-		StartSketch();
+	if (pgm_read_word(0) != 0xFFFF) { // if there's a sketch loaded
+	  if (mcusr_state & (1<<PORF)) {
+	    // power reset
+	    StartSketch();
+	  } else if (mcusr_state & (1<<EXTRF)) {
+	    // External reset -  we should continue to self-programming mode.
+	    // After a power-on reset skip the bootloader and jump straight to sketch 
+	    // if one exists.	
+	  } else if ((mcusr_state == (1<<WDRF)) && (bootKeyPtrVal != bootKey)) {	
+	    // If it looks like an "accidental" watchdog reset then start the sketch.
+	    StartSketch();
+	  }
 	}
 	
 	/* Setup hardware required for the bootloader */
@@ -149,6 +153,7 @@ int main(void)
 			RunBootloader = false;
 
 		LEDPulse();
+		
 	}
 
 	/* Disconnect from the host - USB interface will be reset later along with the AVR */
@@ -185,7 +190,7 @@ void SetupHardware(void)
 	 * or writing since SPM has tight timing requirements.
 	 */ 
 	OCR1AH = 0;
-	OCR1AL = 250;
+	OCR1AL = F_CPU/ 64000;
 	TIMSK1 = (1 << OCIE1A);					// enable timer 1 output compare A match interrupt
 	TCCR1B = ((1 << CS11) | (1 << CS10));	// 1/64 prescaler on timer 1 input
 

@@ -47,18 +47,38 @@
 #----------------------------------------------------------------------------
 
 # USB vendor ID (VID)
-# reuse of this VID by others is forbidden by USB-IF
 # official Arduino LLC VID
-# VID = 0x2341
+#VID = 0x2341
 
+# Adafruit VID
+VID = 0x239A
 
 # USB product ID (PID)
 # official Leonardo PID
-# PID = 0x0036
+#PID = 0x0036
 # official Micro PID
 # PID = 0x0037
 # official Esplora PID
 # PID = 0x003C
+
+# for Flora
+#PID = 0x0004   
+
+# for MicroBLE
+#PID = 0x000A
+
+# for Feather 32u4
+#PID = 0x000C
+
+# for ItsyBitsy 32u4 5V
+#PID = 0x000E
+
+# for ItsyBitsy 32u4 3V
+#PID = 0x000D
+
+# for Circuit Playground 32u4
+PID = 0x0011
+
 
 # MCU name
 MCU = atmega32u4
@@ -85,7 +105,7 @@ BOARD = USER
 #     does not *change* the processor frequency - it should merely be updated to
 #     reflect the processor speed set externally so that the code can use accurate
 #     software delays.
-F_CPU = 16000000
+F_CPU = 8000000
 
 
 # Input clock frequency.
@@ -109,7 +129,7 @@ F_USB = $(F_CPU)
 # bytes, and so will need to be doubled to obtain the byte address needed by AVR-GCC.
 FLASH_SIZE_KB        = 32
 BOOT_SECTION_SIZE_KB = 4
-BOOT_START           = 0x$(shell echo "obase=16; ($(FLASH_SIZE_KB) - $(BOOT_SECTION_SIZE_KB)) * 1024" | bc)
+BOOT_START           = 0x7000
 
 
 # Output format. (can be srec, ihex, binary)
@@ -127,7 +147,7 @@ OBJDIR = .
 
 
 # Path to the LUFA library
-LUFA_PATH = ../../../../../../LUFA/LUFA-111009
+LUFA_PATH = ../../../../../LUFA-111009
 
 
 # LUFA library compile-time options and predefined tokens
@@ -369,7 +389,7 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = avrispmkII
+AVRDUDE_PROGRAMMER = usbtiny
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
 AVRDUDE_PORT = usb
@@ -377,6 +397,9 @@ AVRDUDE_PORT = usb
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
+
+AVRDUDE_WRITE_FUSES_UNLOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x3F:m
+AVRDUDE_WRITE_FUSES_LOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x2F:m
 
 # Uncomment the following if you want avrdude's erase cycle counter.
 # Note that this counter needs to be initialized first using -Yn,
@@ -439,7 +462,7 @@ OBJDUMP = avr-objdump
 SIZE = avr-size
 AR = avr-ar rcs
 NM = avr-nm
-AVRDUDE = /Applications/avrdude -C /Applications/avrdude.conf -B 1
+AVRDUDE = avrdude -B 2
 REMOVE = rm -f
 REMOVEDIR = rm -rf
 COPY = cp
@@ -544,8 +567,9 @@ gccversion :
 
 # Program the device.
 program: $(TARGET).hex $(TARGET).eep
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -e $(AVRDUDE_WRITE_FUSES_UNLOCK) $(AVRDUDE_WRITE_EEPROM)
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-
+	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FUSES_LOCK) $(AVRDUDE_WRITE_EEPROM)
 
 # Generate avr-gdb config/init file which does the following:
 #     define the reset signal, load the target file, connect to target, and set

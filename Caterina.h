@@ -65,11 +65,31 @@
 		#define SOFTWARE_IDENTIFIER          "CATERINA"
 		
 		#define CPU_PRESCALE(n)	(CLKPR = 0x80, CLKPR = (n))
-		#define LED_SETUP()		DDRC |= (1<<7); DDRB |= (1<<0); DDRD |= (1<<5);
+
+#if (DEVICE_PID == 0x0004)
+// flora
+		#define LED_SETUP()		DDRE |= (1<<6); DDRB |= (1<<0); DDRD |= (1<<5);
+		#define TX_LED_OFF()	PORTD &= ~(1<<5)
+		#define TX_LED_ON()		PORTD |= (1<<5)
+		#define RX_LED_OFF()	PORTB &= ~(1<<0)
+		#define RX_LED_ON()		PORTB |= (1<<0)
+		#define L_LED_OFF()		PORTE &= ~(1<<6)
+		#define L_LED_ON()		PORTE |= (1<<6)
+		#define L_LED_TOGGLE()	PORTE ^= (1<<6)
+#elif (DEVICE_PID >= 0x000A) || (DEVICE_PID <= 0x000E)
+// Feather 32u4
+                #define LED_SETUP()     DDRC |= _BV(7)
+                #define TX_LED_OFF()	{}
+		#define TX_LED_ON()	{}
+		#define RX_LED_OFF()	{}
+		#define RX_LED_ON()	{}
 		#define L_LED_OFF()		PORTC &= ~(1<<7)
 		#define L_LED_ON()		PORTC |= (1<<7)
 		#define L_LED_TOGGLE()	PORTC ^= (1<<7)
-		#if DEVICE_PID == 0x0037	// polarity of the RX and TX LEDs is reversed on the Micro
+#else
+// Micro, Leonardo, etc.
+		#define LED_SETUP()		DDRC |= (1<<7); DDRB |= (1<<0); DDRD |= (1<<5);
+                #if DEVICE_PID == 0x0037	// polarity of the RX and TX LEDs is reversed on the Micro
 			#define TX_LED_OFF()	PORTD &= ~(1<<5)
 			#define TX_LED_ON()		PORTD |= (1<<5)
 			#define RX_LED_OFF()	PORTB &= ~(1<<0)
@@ -80,6 +100,7 @@
 			#define RX_LED_OFF()	PORTB |= (1<<0)
 			#define RX_LED_ON()		PORTB &= ~(1<<0)
 		#endif
+#endif
 
 	/* Type Defines: */
 		/** Type define for a non-returning pointer to the start of the loaded application in flash memory. */
