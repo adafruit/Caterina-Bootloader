@@ -69,10 +69,21 @@ uint16_t Timeout = 0;
 uint16_t bootKey = 0x7777;
 volatile uint16_t *const bootKeyPtr = (volatile uint16_t *)0x0800;
 
+#if (DOUBLE_TAP_RESET == 1)
+  #define DOUBLE_TAP_MAGIC (0xADAF)
+  #define DOUBLE_TAP_MAXTIME (750)  // 750 ms max between clicks
+  volatile uint16_t *const doubleclickKeyPtr = (volatile uint16_t *)0x0810;
+#endif
+
 void StartSketch(void)
 {
 	cli();
-	
+
+#if (DOUBLE_TAP_RESET == 1)
+	// clear doubleclick pointer magic, to be sure
+	*doubleclickKeyPtr = 0x0;
+#endif
+
 	/* Undo TIMER1 setup and clear the count before running the sketch */
 	TIMSK1 = 0;
 	TCCR1B = 0;
@@ -122,14 +133,26 @@ int main(void)
 	/* Watchdog may be configured with a 15 ms period so must disable it before going any further */
 	wdt_disable();
 	
+	
+	// write a unique value to a special 
 	if (pgm_read_word(0) != 0xFFFF) { // if there's a sketch loaded
 	  if (mcusr_state & (1<<PORF)) {
 	    // power reset
 	    StartSketch();
 	  } else if (mcusr_state & (1<<EXTRF)) {
-	    // External reset -  we should continue to self-programming mode.
-	    // After a power-on reset skip the bootloader and jump straight to sketch 
-	    // if one exists.	
+#if (DOUBLE_TAP_RESET == 1)
+	    if (*doubleclickKeyPtr == DOUBLE_TAP_MAGIC) {
+	      // double clicked, go to bootloader, but remove the magic
+	      *doubleclickKeyPtr = 0;
+	    } else {
+	      // ok we reset, but it wasnt a double click. first, indicate that we did reset once
+	      *doubleclickKeyPtr = DOUBLE_TAP_MAGIC;
+	      // now wait at least DOUBLE_TAP_MAXTIME ~500-750 ms for second click
+	      _delay_ms(DOUBLE_TAP_MAXTIME);
+	      // if we didn't get a second reset, go to sketch, this will also clear the keyptr
+	      StartSketch();
+	    }
+#endif
 	  } else if ((mcusr_state == (1<<WDRF)) && (bootKeyPtrVal != bootKey)) {	
 	    // If it looks like an "accidental" watchdog reset then start the sketch.
 	    StartSketch();

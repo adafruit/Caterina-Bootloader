@@ -63,22 +63,19 @@ VID = 0x239A
 
 # for Flora
 #PID = 0x0004   
-
 # for MicroBLE
 #PID = 0x000A
-
 # for Feather 32u4
 #PID = 0x000C
-
 # for ItsyBitsy 32u4 5V
 #PID = 0x000E
-
 # for ItsyBitsy 32u4 3V
 #PID = 0x000D
-
 # for Circuit Playground 32u4
 PID = 0x0011
 
+# double tap reset button to bootload? set to 1
+DOUBLE_TAP_RESET = 1
 
 # MCU name
 MCU = atmega32u4
@@ -228,6 +225,7 @@ CDEFS += -DBOARD=BOARD_$(BOARD) -DARCH=ARCH_$(ARCH)
 CDEFS += -DBOOT_START_ADDR=$(BOOT_START)UL
 CDEFS += -DDEVICE_VID=$(VID)UL
 CDEFS += -DDEVICE_PID=$(PID)UL
+CDEFS += -DDOUBLE_TAP_RESET=$(DOUBLE_TAP_RESET)UL
 CDEFS += $(LUFA_OPTS)
 
 
