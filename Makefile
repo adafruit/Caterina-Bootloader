@@ -396,8 +396,8 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 
-AVRDUDE_WRITE_FUSES_UNLOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x3F:m
-AVRDUDE_WRITE_FUSES_LOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x2F:m
+AVRDUDE_WRITE_FUSES_UNLOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x3F:m -B 25
+AVRDUDE_WRITE_FUSES_LOCK = -U lfuse:w:0xff:m -U hfuse:w:0xd8:m -U efuse:w:0xcb:m -U lock:w:0x2F:m -B 25
 
 # Uncomment the following if you want avrdude's erase cycle counter.
 # Note that this counter needs to be initialized first using -Yn,
@@ -460,7 +460,7 @@ OBJDUMP = avr-objdump
 SIZE = avr-size
 AR = avr-ar rcs
 NM = avr-nm
-AVRDUDE = avrdude -B 2
+AVRDUDE = avrdude
 REMOVE = rm -f
 REMOVEDIR = rm -rf
 COPY = cp
@@ -566,7 +566,7 @@ gccversion :
 # Program the device.
 program: $(TARGET).hex $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -e $(AVRDUDE_WRITE_FUSES_UNLOCK) $(AVRDUDE_WRITE_EEPROM)
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -B 1 $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FUSES_LOCK) $(AVRDUDE_WRITE_EEPROM)
 
 # Generate avr-gdb config/init file which does the following:
