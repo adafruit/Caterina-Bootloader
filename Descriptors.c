@@ -191,41 +191,41 @@ const USB_Descriptor_String_t LanguageString =
  */
 const USB_Descriptor_String_t ProductString =
 {
-	.Header                 = {.Size = USB_STRING_LEN(16), .Type = DTYPE_String},
+	.Header                 = {.Size = USB_STRING_LEN(28), .Type = DTYPE_String},
 
 	#if DEVICE_PID == 0x0036
-	.UnicodeString          = L"Arduino Leonardo" 
+	.UnicodeString          = L"Arduino Leonardo            "
 	#elif DEVICE_PID == 0x0037
-	.UnicodeString		= L"Arduino Micro   "
+	.UnicodeString		= L"Arduino Micro               "
 	#elif DEVICE_PID == 0x003C
-	.UnicodeString		= L"Arduino Esplora "
+	.UnicodeString		= L"Arduino Esplora             "
 	#elif DEVICE_PID == 0x0004
-	.UnicodeString          = L"Adafruit Flora" 
+	.UnicodeString          = L"Adafruit Flora              "
 	#elif DEVICE_PID == 0x000A
-	.UnicodeString          = L"Adafruit Bluefruit Micro" 
+	.UnicodeString          = L"Adafruit Bluefruit Micro    "
 	#elif DEVICE_PID == 0x000C
-	.UnicodeString          = L"Adafruit Feather 32u4" 
+	.UnicodeString          = L"Adafruit Feather 32u4       "
 	#elif DEVICE_PID == 0x000D
-	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 3V" 
+	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 3V  "
 	#elif DEVICE_PID == 0x000E
-	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 5V" 
+	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 5V  "
 	#elif DEVICE_PID == 0x0011
-	.UnicodeString          = L"Adafruit Circuit Playground" 
+	.UnicodeString          = L"Adafruit Circuit Playground "
 	#else
-	.UnicodeString		= L"USB IO board    "
+	.UnicodeString		= L"USB IO board                "
 	#endif
 };
 
 const USB_Descriptor_String_t ManufNameString = 
 {
-	.Header					= {.Size = USB_STRING_LEN(11), .Type = DTYPE_String},
+	.Header					= {.Size = USB_STRING_LEN(24), .Type = DTYPE_String},
 	
 	#if DEVICE_VID == 0x2341
-	.UnicodeString			= L"Arduino LLC"
+	.UnicodeString			= L"Arduino LLC             "
 	#elif DEVICE_VID == 0x239A
-	.UnicodeString			= L"Adafruit Industries LLC"
+	.UnicodeString			= L"Adafruit Industries LLC "
 	#else
-	.UnicodeString			= L"Unknown    "
+	.UnicodeString			= L"Unknown                 "
 	#endif
 };
 
