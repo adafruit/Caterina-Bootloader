@@ -185,47 +185,49 @@ const USB_Descriptor_String_t LanguageString =
 	.UnicodeString          = {LANGUAGE_ID_ENG}
 };
 
+#define DESCRIPTOR_STRING(x) \
+	.Header			= {.Size = sizeof(USB_Descriptor_Header_t) + (sizeof(x)-2), .Type = DTYPE_String}, \
+	.UnicodeString		= x
+
 /** Product descriptor string. This is a Unicode string containing the product's details in human readable form,
  *  and is read out upon request by the host when the appropriate string ID is requested, listed in the Device
  *  Descriptor.
  */
 const USB_Descriptor_String_t ProductString =
 {
-	.Header                 = {.Size = USB_STRING_LEN(28), .Type = DTYPE_String},
-
 	#if DEVICE_PID == 0x0036
-	.UnicodeString          = L"Arduino Leonardo            "
+	DESCRIPTOR_STRING(L"Arduino Leonardo")
 	#elif DEVICE_PID == 0x0037
-	.UnicodeString		= L"Arduino Micro               "
+	DESCRIPTOR_STRING(L"Arduino Micro")
 	#elif DEVICE_PID == 0x003C
-	.UnicodeString		= L"Arduino Esplora             "
+	DESCRIPTOR_STRING(L"Arduino Esplora")
 	#elif DEVICE_PID == 0x0004
-	.UnicodeString          = L"Adafruit Flora              "
+	DESCRIPTOR_STRING(L"Adafruit Flora")
 	#elif DEVICE_PID == 0x000A
-	.UnicodeString          = L"Adafruit Bluefruit Micro    "
+	DESCRIPTOR_STRING(L"Adafruit Bluefruit Micro")
 	#elif DEVICE_PID == 0x000C
-	.UnicodeString          = L"Adafruit Feather 32u4       "
+	DESCRIPTOR_STRING(L"Adafruit Feather 32u4")
 	#elif DEVICE_PID == 0x000D
-	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 3V  "
+	DESCRIPTOR_STRING(L"Adafruit ItsyBitsy 32u4 3V")
 	#elif DEVICE_PID == 0x000E
-	.UnicodeString          = L"Adafruit ItsyBitsy 32u4 5V  "
+	DESCRIPTOR_STRING(L"Adafruit ItsyBitsy 32u4 5V")
 	#elif DEVICE_PID == 0x0011
-	.UnicodeString          = L"Adafruit Circuit Playground "
+	DESCRIPTOR_STRING(L"Adafruit Circuit Playground")
 	#else
-	.UnicodeString		= L"USB IO board                "
+	DESCRIPTOR_STRING(L"USB IO board")
+	#warning Unrecognized PID, using descriptor string "USB IO board"
 	#endif
 };
 
 const USB_Descriptor_String_t ManufNameString = 
 {
-	.Header					= {.Size = USB_STRING_LEN(24), .Type = DTYPE_String},
-	
 	#if DEVICE_VID == 0x2341
-	.UnicodeString			= L"Arduino LLC             "
+	DESCRIPTOR_STRING(L"Arduino LLC")
 	#elif DEVICE_VID == 0x239A
-	.UnicodeString			= L"Adafruit Industries LLC "
+	DESCRIPTOR_STRING(L"Adafruit Industries LLC")
 	#else
-	.UnicodeString			= L"Unknown                 "
+	DESCRIPTOR_STRING(L"Unknown")
+	#warning Unrecognized VID, using descriptor string "Unknown"
 	#endif
 };
 
