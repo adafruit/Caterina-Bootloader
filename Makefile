@@ -67,12 +67,12 @@ VID = 0x239A
 #PID = 0x000A
 # for Feather 32u4
 #PID = 0x000C
+# for ItsyBitsy 32u4 3V
+PID = 0x000D
 # for ItsyBitsy 32u4 5V
 #PID = 0x000E
-# for ItsyBitsy 32u4 3V
-#PID = 0x000D
 # for Circuit Playground 32u4
-PID = 0x0011
+#PID = 0x0011
 
 # double tap reset button to bootload? set to 1
 DOUBLE_TAP_RESET = 1
