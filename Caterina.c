@@ -90,6 +90,9 @@ void StartSketch(void)
 	TCNT1H = 0;		// 16-bit write to TCNT1 requires high byte be written first
 	TCNT1L = 0;
 	
+	/* Undo USB setup */
+	USB_Disable();
+	
 	/* Relocate the interrupt vector table to the application section */
 	MCUCR = (1 << IVCE);
 	MCUCR = 0;
